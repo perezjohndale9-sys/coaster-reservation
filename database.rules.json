@@ -1,0 +1,32 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "coasterAvailability": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'PUT_DRIVER_UID_HERE'"
+    },
+
+    "reservations": {
+      ".read": true,
+      "$tripId": {
+        "$resId": {
+          ".write": "auth != null && (auth.uid === 'PUT_DRIVER_UID_HERE' || (!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && newData.exists() && data.child('uid').val() === auth.uid && newData.child('uid').val() === auth.uid))",
+          ".validate": "newData.hasChildren(['id','uid','seatNumber','status','expiresAt','tripId'])",
+          "id": { ".validate": "newData.val() === $resId" },
+          "tripId": { ".validate": "newData.val() === $tripId" },
+          "seatNumber": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30" },
+          "status": {
+            ".validate": "(!data.exists() && newData.val() === 'ACTIVE') || (data.val() === 'ACTIVE' && (newData.val() === 'CANCELLED' || newData.val() === 'EXPIRED' || newData.val() === 'FULFILLED')) || data.val() === newData.val()"
+          },
+          "expiresAt": {
+            ".validate": "newData.isNumber() && (data.exists() ? newData.val() === data.val() : newData.val() <= now + 660000)"
+          },
+          "fulfilledAt": { ".validate": "newData.isNumber()" },
+          "$other": { ".validate": false }
+        }
+      }
+    }
+  }
+}
