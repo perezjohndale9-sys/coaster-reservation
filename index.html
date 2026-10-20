@@ -36,7 +36,7 @@
           </svg>School Bus Reservation</h1>
           <p class="subtitle">Mabalacat City College</p>
         </div>
-        <span class="capacity-badge">30 seats</span>
+        <span class="capacity-badge">Dynamic</span>
       </div>
 
       <div class="utility-row">
@@ -72,7 +72,7 @@
       </div>
 
       <div id="availability-banner" class="availability-banner" hidden>
-        <p id="availability-message">The driver has marked this coaster as unavailable right now.</p>
+        <p id="availability-message">The driver has marked this vehicle as unavailable right now.</p>
       </div>
 
       <section id="driver-panel" class="driver-panel" hidden>
@@ -85,10 +85,10 @@
           <button id="mark-unavailable-btn" class="btn exit" type="button">🚫 Unavailable</button>
         </div>
         <div class="driver-buttons">
-          <button id="mark-not-full-btn" class="btn board" type="button">🟢 Not Full</button>
-          <button id="mark-full-btn" class="btn exit" type="button">🔴 Full</button>
+          <button id="mark-l300-btn" class="btn board" type="button">🚐 L300 (15 Seats)</button>
+          <button id="mark-coaster-btn" class="btn exit" type="button">🚌 Coaster (25 Seats)</button>
         </div>
-        <button id="show-door-qr-btn" class="btn board" style="margin-top:6px;" type="button">🖨️ Print Coaster Door QR</button>
+        <button id="show-door-qr-btn" class="btn board" style="margin-top:6px;" type="button">🖨️ Print Vehicle Door QR</button>
         <p id="driver-current-status" class="driver-current-status"></p>
       </section>
 
@@ -125,7 +125,7 @@
       <section id="reservation-panel" class="reservation-panel" hidden>
         <p id="reservation-trip"></p>
         <div id="checkin-status-banner" class="checkin-status-banner">
-          <p id="checkin-status-text">⚠️ Scan the QR code on the coaster door upon boarding to confirm your seat!</p>
+          <p id="checkin-status-text">⚠️ Scan the QR code on the vehicle door upon boarding to confirm your seat!</p>
         </div>
 
         <!-- Camera / File Upload Trigger Button -->
@@ -150,7 +150,7 @@
   <!-- Live Camera Scanner Modal -->
   <div id="scanner-modal" class="modal-overlay" hidden>
     <div class="modal-card scanner-modal-card">
-      <h2>Scan Coaster Door QR</h2>
+      <h2>Scan Vehicle Door QR</h2>
       <div id="qr-reader" class="qr-reader"></div>
       <div class="scanner-options">
         <button id="upload-file-btn" class="btn exit" style="margin-bottom:8px;" type="button">📁 Choose Image / Files</button>
@@ -164,7 +164,7 @@
     <div class="modal-card door-qr-modal-card">
       <div id="printable-door-qr-container" class="printable-door-qr-container">
         <h2>Mabalacat City College</h2>
-        <p class="door-sub">Coaster Boarding Check-In</p>
+        <p class="door-sub">Vehicle Boarding Check-In</p>
         <div id="door-qr-code" class="door-qr-code"></div>
         <p class="door-instructions"><strong>SCAN TO FULFILL RESERVATION</strong><br>Passengers must scan this QR code upon entering to validate their seat reservation.</p>
       </div>
