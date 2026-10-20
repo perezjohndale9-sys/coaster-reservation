@@ -51,8 +51,8 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: url('logo.png') center 55% / 75% no-repeat;
-  opacity: .07;
+  background: url('logo.png') center center / 70% no-repeat;
+  opacity: .16;
   pointer-events: none;
   z-index: 0;
 }
@@ -224,7 +224,7 @@ h1 {
 
 /* ---------- Seat map (bus interior) ---------- */
 .seat-section {
-  background: var(--white);
+  background: rgba(255,255,255,.82);
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 14px;
