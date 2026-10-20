@@ -385,7 +385,7 @@ auth.onAuthStateChanged((user) => {
   if (!user) {
     auth.signInAnonymously().catch((err) => {
       syncIndicator.textContent = "Auth error";
-      showToast("Auth error: " + err.message);
+      showToast("Auth error (" + err.code + ")");
     });
     return;
   }
@@ -404,8 +404,15 @@ loginForm.addEventListener("submit", (e) => {
       loginModal.hidden = true;
       loginForm.reset();
     })
-    .catch(() => {
-      loginError.textContent = "Invalid login credentials";
+    .catch((err) => {
+      const map = {
+        "auth/invalid-credential": "Wrong email or password, or this driver account doesn't exist in Firebase yet.",
+        "auth/user-not-found": "This driver account doesn't exist in Firebase yet.",
+        "auth/wrong-password": "Wrong password.",
+        "auth/operation-not-allowed": "Email/Password sign-in is not enabled in Firebase.",
+        "auth/unauthorized-domain": "This website's domain is not in Firebase Authorized domains."
+      };
+      loginError.textContent = map[err.code] || ("Login failed: " + err.code);
       loginError.hidden = false;
     });
 });
