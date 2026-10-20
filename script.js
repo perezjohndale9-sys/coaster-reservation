@@ -1,4 +1,4 @@
-// ================= Firebase =================
+// ================= Firebase (Compat Initialization matching HTML script tags) =================
 const firebaseConfig = {
   apiKey: "AIzaSyDen-rGO_rvp9FA7a6nCLjUaU5bOKwsrps",
   authDomain: "coaster-reservation.firebaseapp.com",
@@ -6,10 +6,13 @@ const firebaseConfig = {
   projectId: "coaster-reservation",
   storageBucket: "coaster-reservation.firebasestorage.app",
   messagingSenderId: "623130470619",
-  appId: "1:623130470619:web:27b93edac8a337227144fe"
+  appId: "1:623130470619:web:d86646632fcb9b6d7144fe",
+  measurementId: "G-43MHRKY4T4"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.database();
 const auth = firebase.auth();
 
