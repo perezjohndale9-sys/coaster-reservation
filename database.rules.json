@@ -5,14 +5,14 @@
 
     "coasterAvailability": {
       ".read": true,
-      ".write": "auth != null && auth.uid === 'PUT_DRIVER_UID_HERE'"
+      ".write": "auth != null && auth.uid === 'L8jsWURDPrW0f0T5PAsD8UGZxnh2'"
     },
 
     "reservations": {
       ".read": true,
       "$tripId": {
         "$resId": {
-          ".write": "auth != null && (auth.uid === 'PUT_DRIVER_UID_HERE' || (!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && newData.exists() && data.child('uid').val() === auth.uid && newData.child('uid').val() === auth.uid))",
+          ".write": "auth != null && (auth.uid === 'L8jsWURDPrW0f0T5PAsD8UGZxnh2' || (!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && newData.exists() && data.child('uid').val() === auth.uid && newData.child('uid').val() === auth.uid))",
           ".validate": "newData.hasChildren(['id','uid','seatNumber','status','expiresAt','tripId'])",
           "id": { ".validate": "newData.val() === $resId" },
           "tripId": { ".validate": "newData.val() === $tripId" },
