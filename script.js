@@ -17,7 +17,6 @@ const CAPACITY = 30;
 const RESERVATION_HOLD_MS = 10 * 60 * 1000;
 const FULFILLED_GRACE_MS = 30 * 60 * 1000; // a checked-in seat stays "mine" until 30 min after departure
 const TZ = "Asia/Manila";
-// Text encoded in the printed door QR. Change it if you like, then reprint the QR.
 const DOOR_CODE = "MCC-COASTER-DOOR-V1";
 
 // ================= Time helpers (server-synced, Manila) =================
@@ -30,21 +29,18 @@ function getSyncedNow() {
   return Date.now() + serverTimeOffset;
 }
 
-// FIX #5: date key in Asia/Manila instead of UTC (toISOString)
 function manilaDateKey(ms) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit"
-  }).format(new Date(ms)); // "YYYY-MM-DD"
+  }).format(new Date(ms));
 }
 
-// tripId looks like "2026-10-20_dapdap_mabiga_0600"
 function tripTimeMs(tripId) {
   const m = /^(\d{4}-\d{2}-\d{2})_.*_(\d{2})(\d{2})$/.exec(tripId || "");
   if (!m) return NaN;
-  return new Date(`${m[1]}T${m[2]}:${m[3]}:00+08:00`).getTime(); // Philippines is UTC+8, no DST
+  return new Date(`${m[1]}T${m[2]}:${m[3]}:00+08:00`).getTime();
 }
 
-// FIX #6: a reservation only holds a seat if it is truly live, based on expiresAt
 function isSeatHeld(res) {
   if (!res) return false;
   const now = getSyncedNow();
@@ -170,7 +166,6 @@ function updateClockOnly() {
   phClock.textContent = `🇵🇭 ${new Date(getSyncedNow()).toLocaleTimeString("en-US", { timeZone: TZ })}`;
 }
 
-// FIX #7: past trips are disabled, and the selection moves to the next upcoming trip
 function refreshTripOptions(force = false) {
   const now = getSyncedNow();
   const dateKey = manilaDateKey(now);
@@ -197,7 +192,6 @@ function refreshTripOptions(force = false) {
   if (!force && key === lastOptionsKey && selectDapdapMabiga.options.length > 1) return;
   lastOptionsKey = key;
 
-  // keep the current choice only if it is today's and hasn't left yet
   if (!selectedTrip || !selectedTrip.startsWith(dateKey) || tripTimeMs(selectedTrip) <= now) {
     selectedTrip = all.find((t) => tripTimeMs(t) > now) || null;
   }
@@ -378,9 +372,7 @@ function stopTimer() {
   }
 }
 
-// ================= Auth (FIX #3) =================
-// Students sign in anonymously (so Firebase rules can tell users apart).
-// The driver signs in with a real email/password account created in Firebase Console.
+// ================= Auth =================
 auth.onAuthStateChanged((user) => {
   if (!user) {
     auth.signInAnonymously().catch((err) => {
@@ -418,9 +410,7 @@ loginForm.addEventListener("submit", (e) => {
 });
 
 loginCancel.addEventListener("click", () => { loginModal.hidden = true; });
-driverLogout.addEventListener("click", () => {
-  auth.signOut(); // onAuthStateChanged will sign back in anonymously as a student
-});
+driverLogout.addEventListener("click", () => { auth.signOut(); });
 
 switchRoleBtn.addEventListener("click", () => { roleSelectScreen.hidden = false; });
 roleStudentBtn.addEventListener("click", () => {
@@ -499,7 +489,7 @@ cancelBtn.addEventListener("click", () => {
     .catch((err) => showToast("Error: " + err.message));
 });
 
-// ================= QR scanning (FIX #1) =================
+// ================= QR scanning =================
 let html5Qr = null;
 let scanHandled = false;
 
@@ -547,6 +537,13 @@ openCameraBtn.addEventListener("click", async () => {
   }
   scanHandled = false;
   scannerModal.hidden = false;
+  
+  // Safety check for library availability
+  if (typeof Html5Qrcode === "undefined") {
+    showToast("Scanner library is still loading. Try again in a second.");
+    return;
+  }
+
   try {
     html5Qr = new Html5Qrcode("qr-reader");
     await html5Qr.start(
@@ -568,6 +565,10 @@ qrFileInput.addEventListener("change", async (e) => {
   if (!file) return;
   await stopScanner();
   try {
+    if (typeof Html5Qrcode === "undefined") {
+      showToast("Scanner library is still loading.");
+      return;
+    }
     html5Qr = new Html5Qrcode("qr-reader");
     scanHandled = false;
     const text = await html5Qr.scanFile(file, false);
@@ -583,7 +584,9 @@ closeScannerBtn.addEventListener("click", closeScanner);
 showDoorQrBtn.addEventListener("click", () => {
   doorQrModal.hidden = false;
   doorQrCode.innerHTML = "";
-  new QRCode(doorQrCode, { text: DOOR_CODE, width: 220, height: 220 });
+  if (typeof QRCode !== "undefined") {
+    new QRCode(doorQrCode, { text: DOOR_CODE, width: 220, height: 220 });
+  }
 });
 printDoorQrBtn.addEventListener("click", () => window.print());
 closeDoorQrBtn.addEventListener("click", () => { doorQrModal.hidden = true; });
@@ -605,7 +608,6 @@ setInterval(() => {
   updateClockOnly();
   tick++;
   if (tick % 15 === 0) {
-    // re-check expired holds, departed trips and the date rollover
     activeReservation = findMyReservation();
     renderUI();
   }
